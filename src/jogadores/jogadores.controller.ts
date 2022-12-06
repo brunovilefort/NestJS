@@ -4,7 +4,7 @@ import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 @Controller('api/jogadores')
 export class JogadoresController {
   @Post()
-  async criarAtualizarJogadores(
+  async criarAtualizarJogador(
     @Body()
     criarJogadorDto: CriarJogadorDto,
   ) {
