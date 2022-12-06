@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 
@@ -21,6 +21,17 @@ export class JogadoresService {
 
   async consultarTodosJogadores(): Promise<Jogador[]> {
     return await this.jogadores;
+  }
+
+  async consultartJogadortesPorEmail(email: string): Promise<Jogador> {
+    const jogadorEncontrado = await this.jogadores.find(
+      (jogador) => jogador.email === email,
+    );
+    if (!jogadorEncontrado)
+      throw new NotFoundException(
+        `Jogador com o e-mail ${email} não foi encontrado.`,
+      );
+    return jogadorEncontrado;
   }
 
   private async criar(criarJogadorDto: CriarJogadorDto): Promise<void> {
