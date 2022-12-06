@@ -13,6 +13,10 @@ export class JogadoresService {
     await this.criar(criarJogadorDto);
   }
 
+  async consultarTodosJogadores(): Promise<Jogador[]> {
+    return await this.jogadores;
+  }
+
   private async criar(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { phone, email, name } = criarJogadorDto;
     const jogador: Jogador = {
