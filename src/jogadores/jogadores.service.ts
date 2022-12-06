@@ -3,11 +3,18 @@ import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 
 import { v4 } from 'uuid';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class JogadoresService {
   private jogadores: Jogador[] = [];
   private readonly logger = new Logger(JogadoresService.name);
+
+  constructor(
+    @InjectModel('Jogador')
+    private readonly jogadorModel: Model<Jogador>,
+  ) {}
 
   async criarAtualizarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { email } = criarJogadorDto;
