@@ -1,16 +1,10 @@
+import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { JogadoresModule } from './jogadores/jogadores.module';
+import { PlayersModule } from './players/players.module';
 
 @Module({
-  imports: [
-    JogadoresModule,
-    MongooseModule.forRoot(process.env.MONGO_URI, {
-      useNewUrlParse: true,
-      useCreateIndex: true,
-      useFindAndModify: false,
-    }),
-  ],
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI), PlayersModule],
   controllers: [],
   providers: [],
 })

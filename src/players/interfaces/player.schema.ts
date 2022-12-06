@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+import * as mongoose from 'mongoose';
 
-export const JogadorSchema = new mongoose.Schema(
+export const PlayerSchema = new mongoose.Schema(
   {
     phone: { type: String },
     email: { type: String, unique: true },
@@ -9,5 +9,5 @@ export const JogadorSchema = new mongoose.Schema(
     positionRanking: Number,
     urlPayer: String,
   },
-  { timestamp: true, collection: 'jogadores' },
+  { timestamp: true, collection: 'players' },
 );
