@@ -2,22 +2,29 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { Jogador } from './interfaces/jogador.interface';
 
+import { v4 } from 'uuid';
+
 @Injectable()
 export class JogadoresService {
-  private jogadores: Jogador[];
+  private jogadores: Jogador[] = [];
   private readonly logger = new Logger(JogadoresService.name);
 
   async criarAtualizarJogador(criarJogadorDto: CriarJogadorDto): Promise<void> {
-    this.logger.log(`criar jogador dto: ${criarJogadorDto}`);
+    await this.criar(criarJogadorDto);
   }
 
-  private criar(criarJogadorDto: CriarJogadorDto): void {
+  private async criar(criarJogadorDto: CriarJogadorDto): Promise<void> {
     const { phone, email, name } = criarJogadorDto;
     const jogador: Jogador = {
-      id: '',
+      _id: v4(),
       phone,
       email,
       name,
+      ranking: 'A',
+      positionRanking: 2,
+      urlPayer: 'www.google.com.br/photo.jpg',
     };
+    this.logger.log(`criar jogador dto: ${JSON.stringify(jogador)}`);
+    this.jogadores.push(jogador);
   }
 }
