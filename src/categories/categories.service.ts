@@ -43,6 +43,13 @@ export class CategoriesService {
     await this.categorieModel.findOneAndUpdate({ categorie }, { $set: { description, events } }).exec();
   }
 
+  async checkPlayerCategory(idPlayer: any): Promise<ICategories> {
+    const allPlayers = await this.playersService.getAll();
+    const playersFilter = allPlayers.filter((player) => player._id === idPlayer);
+    if (playersFilter.length === 0) throw new BadRequestException(`The id ${idPlayer} is not valid.`);
+    return await this.categorieModel.findOne().where('players').in(idPlayer).exec();
+  }
+
   async assignPlayerCategory(params: string[]): Promise<void> {
     const categorie = params['categorie'];
     const idPlayer = params['id-player'];

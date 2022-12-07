@@ -2,11 +2,10 @@ import 'dotenv/config';
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { CategoriesModule, PlayersModule } from './index';
-import { ChallengeModule } from './challenge/challenge.module';
+import { CategoriesModule, PlayersModule, ChallengesModule } from './index';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI), PlayersModule, CategoriesModule, ChallengeModule],
+  imports: [MongooseModule.forRoot(process.env.MONGO_URI), PlayersModule, CategoriesModule, ChallengesModule],
   controllers: [],
   providers: [],
 })
