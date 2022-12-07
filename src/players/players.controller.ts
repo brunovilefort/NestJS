@@ -24,8 +24,8 @@ export class PlayersController {
   async createPlayers(
     @Body()
     player: CreatePlayerDTO,
-  ) {
-    await this.playersService.createPlayer(player);
+  ): Promise<IPlayer> {
+    return await this.playersService.createPlayer(player);
   }
 
   @Put('/:_id')
