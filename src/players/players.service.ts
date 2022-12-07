@@ -1,5 +1,5 @@
 import { IPlayer } from './interfaces';
-import { CreatePlayerDTO } from './dtos';
+import { CreatePlayerDTO, UpdatePlayerDTO } from './dtos';
 
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,7 +33,7 @@ export class PlayersService {
 
   async updatePlayer(
     _id: string,
-    { phone, email, name }: CreatePlayerDTO,
+    { phone, name }: UpdatePlayerDTO,
   ): Promise<void> {
     const existingPlayer = await this.playerModel.findOne({ _id }).exec();
     if (existingPlayer) {
@@ -42,7 +42,7 @@ export class PlayersService {
       );
     }
     await this.playerModel
-      .findOneAndUpdate({ _id }, { $set: { phone, email, name } })
+      .findOneAndUpdate({ _id }, { $set: { phone, name } })
       .exec();
   }
 

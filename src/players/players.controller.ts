@@ -1,5 +1,5 @@
 import { IPlayer } from './interfaces';
-import { CreatePlayerDTO } from './dtos';
+import { CreatePlayerDTO, UpdatePlayerDTO } from './dtos';
 import { PlayersService } from './players.service';
 import { PlayersValidationParametersPipe } from './pipes';
 
@@ -23,19 +23,19 @@ export class PlayersController {
   @UsePipes(ValidationPipe)
   async createPlayers(
     @Body()
-    player: CreatePlayerDTO,
+    createPlayer: CreatePlayerDTO,
   ): Promise<IPlayer> {
-    return await this.playersService.createPlayer(player);
+    return await this.playersService.createPlayer(createPlayer);
   }
 
   @Put('/:_id')
   @UsePipes(ValidationPipe)
   async updatePlayers(
     @Body()
-    player: CreatePlayerDTO,
+    updatePlayer: UpdatePlayerDTO,
     @Param('_id', PlayersValidationParametersPipe) _id: string,
   ): Promise<void> {
-    await this.playersService.updatePlayer(_id, player);
+    await this.playersService.updatePlayer(_id, updatePlayer);
   }
 
   @Get()
