@@ -1,9 +1,10 @@
 import { Model } from 'mongoose';
-import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { ICategories } from './interfaces';
 import { CreateCategorieDTO } from './dtos';
+
 @Injectable()
 export class CategoriesService {
   constructor(

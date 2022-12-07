@@ -1,6 +1,3 @@
-import { IPlayer } from './interfaces';
-import { CreatePlayerDTO, UpdatePlayerDTO } from './dtos';
-
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -8,6 +5,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
+import { IPlayer } from './interfaces';
+import { CreatePlayerDTO, UpdatePlayerDTO } from './dtos';
 
 @Injectable()
 export class PlayersService {
