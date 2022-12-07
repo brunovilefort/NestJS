@@ -1,3 +1,8 @@
+import { IPlayer } from './interfaces';
+import { CreatePlayerDTO } from './dtos';
+import { PlayersService } from './players.service';
+import { PlayersValidationParametersPipe } from './pipes';
+
 import {
   Body,
   Controller,
@@ -9,10 +14,6 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { CreatePlayerDTO } from './dtos';
-import { IPlayer } from './interfaces';
-import { PlayersService } from './players.service';
-import { PlayersValidationParametersPipe } from './pipes';
 
 @Controller('api/players')
 export class PlayersController {
