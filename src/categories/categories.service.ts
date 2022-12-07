@@ -1,6 +1,7 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import {
+  BadGatewayException,
   BadRequestException,
   Injectable,
   NotFoundException,
@@ -9,63 +10,54 @@ import {
 
 import { ICategories } from './interfaces';
 import { CreateCategorieDTO, UpdateCategorieDTO } from './dtos';
+import { PlayersService } from '../players';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectModel('Categorie')
     private readonly categorieModel: Model<ICategories>,
+    private readonly playersService: PlayersService,
   ) {}
 
-  async create({
-    categorie,
-    description,
-    events,
-  }: CreateCategorieDTO): Promise<ICategories> {
-    const existingCategorie = await this.categorieModel
-      .findOne({ categorie })
-      .exec();
-    if (existingCategorie) {
-      throw new BadRequestException(
-        `Categorie: ${categorie} is already registered.`,
-      );
-    }
-    const createdCategorie = new this.categorieModel(
-      categorie,
-      description,
-      events,
-    );
+  async create({ categorie, description, events }: CreateCategorieDTO): Promise<ICategories> {
+    const existingCategorie = await this.categorieModel.findOne({ categorie }).exec();
+    if (existingCategorie) throw new BadRequestException(`Categorie: ${categorie} is already registered.`);
+    const createdCategorie = new this.categorieModel(categorie, description, events);
     return await createdCategorie.save();
   }
 
   async getAll(): Promise<Array<ICategories>> {
-    return await this.categorieModel.find().exec();
+    return await this.categorieModel.find().populate('players').exec();
   }
 
   async findCategorieById(categorie: string): Promise<ICategories> {
-    const existingCategorie = await this.categorieModel
-      .findOne({ categorie })
-      .exec();
-    if (!existingCategorie) {
-      throw new NotImplementedException(
-        `Categorie ${categorie} was not found!`,
-      );
-    }
+    const existingCategorie = await this.categorieModel.findOne({ categorie }).exec();
+    if (!existingCategorie) throw new NotImplementedException(`Categorie ${categorie} was not found!`);
     return existingCategorie;
   }
 
-  async updateCategorie(
-    categorie: string,
-    { description, events }: UpdateCategorieDTO,
-  ): Promise<void> {
-    const existingCategorie = await this.categorieModel
-      .findOne({ categorie })
+  async updateCategorie(categorie: string, { description, events }: UpdateCategorieDTO): Promise<void> {
+    const existingCategorie = await this.categorieModel.findOne({ categorie }).exec();
+    if (!existingCategorie) throw new NotFoundException(`Categorie ${categorie} was not found.`);
+    await this.categorieModel.findOneAndUpdate({ categorie }, { $set: { description, events } }).exec();
+  }
+
+  async assignPlayerCategory(params: string[]): Promise<void> {
+    const categorie = params['categorie'];
+    const idPlayer = params['id-player'];
+    const existingCategorie = await this.categorieModel.findOne({ categorie }).exec();
+    const playerAlreadyRegisteredInCategory = await this.categorieModel
+      .find({ categorie })
+      .where('players')
+      .in(idPlayer)
       .exec();
-    if (!existingCategorie) {
-      throw new NotFoundException(`Categorie ${categorie} was not found.`);
+    await this.playersService.findPlayerById(idPlayer);
+    if (playerAlreadyRegisteredInCategory.length > 0) {
+      throw new BadRequestException(`Player ${idPlayer} is already registered in categorie ${categorie}.`);
     }
-    await this.categorieModel
-      .findOneAndUpdate({ categorie }, { $set: { description, events } })
-      .exec();
+    if (!existingCategorie) throw new BadGatewayException(`Categorie ${categorie} was not found.`);
+    existingCategorie.player.push(idPlayer);
+    await this.categorieModel.findOneAndUpdate({ categorie }, { $set: existingCategorie }).exec();
   }
 }

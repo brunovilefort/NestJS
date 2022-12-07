@@ -1,14 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { IPlayer } from './interfaces';
 import { CreatePlayerDTO, UpdatePlayerDTO } from './dtos';
@@ -44,16 +34,12 @@ export class PlayersController {
   }
 
   @Get('/:_id')
-  async findPlayerById(
-    @Param('_id', PlayersValidationParametersPipe) _id: string,
-  ): Promise<IPlayer> {
+  async findPlayerById(@Param('_id', PlayersValidationParametersPipe) _id: string): Promise<IPlayer> {
     return await this.playersService.findPlayerById(_id);
   }
 
   @Delete('/:id')
-  async deletePlayers(
-    @Param('_id', PlayersValidationParametersPipe) _id: string,
-  ): Promise<void> {
+  async deletePlayers(@Param('_id', PlayersValidationParametersPipe) _id: string): Promise<void> {
     this.playersService.delete(_id);
   }
 }

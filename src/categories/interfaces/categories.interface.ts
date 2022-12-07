@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-import { IPlayer } from 'src/players/interfaces';
+import { IPlayer } from '../../players/interfaces';
 
 export interface ICategories extends Document {
   readonly categorie: string;

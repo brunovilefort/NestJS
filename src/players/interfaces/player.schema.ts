@@ -7,7 +7,7 @@ export const PlayerSchema = new mongoose.Schema(
     name: String,
     ranking: String,
     positionRanking: Number,
-    urlPayer: String,
+    urlPlayer: String,
   },
   { timestamp: true, collection: 'players' },
 );
