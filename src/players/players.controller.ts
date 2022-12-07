@@ -11,6 +11,7 @@ import {
 import { CreatePlayerDTO } from './dtos/create-player-dto';
 import { IPlayer } from './interfaces/player.interface';
 import { PlayersService } from './players.service';
+import { PlayersValidationPipe } from './pipes/players-validation-parameters';
 
 @Controller('api/players')
 export class PlayersController {
@@ -35,7 +36,9 @@ export class PlayersController {
   }
 
   @Delete()
-  async deletarJogador(@Query('email') email: string): Promise<void> {
+  async deletarJogador(
+    @Query('email', PlayersValidationPipe) email: string,
+  ): Promise<void> {
     this.playersService.delete(email);
   }
 }
