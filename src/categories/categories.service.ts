@@ -32,4 +32,8 @@ export class CategoriesService {
     );
     return await createdCategorie.save();
   }
+
+  async getAll(): Promise<Array<ICategories>> {
+    return await this.categorieModel.find().exec();
+  }
 }
