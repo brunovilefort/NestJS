@@ -3,11 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import {
   BadRequestException,
   Injectable,
+  NotFoundException,
   NotImplementedException,
 } from '@nestjs/common';
 
 import { ICategories } from './interfaces';
-import { CreateCategorieDTO } from './dtos';
+import { CreateCategorieDTO, UpdateCategorieDTO } from './dtos';
 
 @Injectable()
 export class CategoriesService {
@@ -51,5 +52,20 @@ export class CategoriesService {
       );
     }
     return existingCategorie;
+  }
+
+  async updateCategorie(
+    categorie: string,
+    { description, events }: UpdateCategorieDTO,
+  ): Promise<void> {
+    const existingCategorie = await this.categorieModel
+      .findOne({ categorie })
+      .exec();
+    if (!existingCategorie) {
+      throw new NotFoundException(`Categorie ${categorie} was not found.`);
+    }
+    await this.categorieModel
+      .findOneAndUpdate({ categorie }, { $set: { description, events } })
+      .exec();
   }
 }
