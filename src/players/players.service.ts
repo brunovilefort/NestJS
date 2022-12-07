@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePlayerDTO } from './dtos/create-player-dto';
 import { IPlayer } from './interfaces/player.interface';
 
@@ -11,6 +15,20 @@ export class PlayersService {
     @InjectModel('Player')
     private readonly playerModel: Model<IPlayer>,
   ) {}
+
+  async createPlayer({
+    phone,
+    email,
+    name,
+  }: CreatePlayerDTO): Promise<IPlayer> {
+    const existingPlayer = await this.playerModel.findOne({ email }).exec();
+    if (existingPlayer)
+      throw new BadRequestException(
+        `The player with email ${email} is already registered.`,
+      );
+    const createdPlayer = new this.playerModel({ phone, email, name });
+    return await createdPlayer.save();
+  }
 
   async createAndUpdate({
     phone,
@@ -38,15 +56,6 @@ export class PlayersService {
 
   async delete(email: string): Promise<any> {
     return await this.playerModel.deleteOne({ email }).exec();
-  }
-
-  private async create({
-    phone,
-    email,
-    name,
-  }: CreatePlayerDTO): Promise<IPlayer> {
-    const createdPlayer = new this.playerModel({ phone, email, name });
-    return await createdPlayer.save();
   }
 
   private async update({ email, name }: CreatePlayerDTO): Promise<IPlayer> {
