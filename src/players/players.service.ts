@@ -30,15 +30,18 @@ export class PlayersService {
     return await createdPlayer.save();
   }
 
-  async createAndUpdate({
-    phone,
-    email,
-    name,
-  }: CreatePlayerDTO): Promise<void> {
-    const existingPlayer = await this.playerModel.findOne({ email }).exec();
-    existingPlayer
-      ? await this.update({ phone, email, name })
-      : await this.create({ phone, email, name });
+  async updatePlayer(
+    _id: string,
+    { phone, email, name }: CreatePlayerDTO,
+  ): Promise<void> {
+    const existingPlayer = await this.playerModel.findOne({ _id }).exec();
+    if (existingPlayer)
+      throw new NotFoundException(
+        `The player with the id: ${_id} was not found.`,
+      );
+    await this.playerModel
+      .findOneAndUpdate({ _id }, { $set: { phone, email, name } })
+      .exec();
   }
 
   async getAll(): Promise<IPlayer[]> {
@@ -56,11 +59,5 @@ export class PlayersService {
 
   async delete(email: string): Promise<any> {
     return await this.playerModel.deleteOne({ email }).exec();
-  }
-
-  private async update({ email, name }: CreatePlayerDTO): Promise<IPlayer> {
-    return await this.playerModel
-      .findOneAndUpdate({ email }, { $set: { name } })
-      .exec();
   }
 }
