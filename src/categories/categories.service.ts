@@ -1,6 +1,10 @@
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotImplementedException,
+} from '@nestjs/common';
 
 import { ICategories } from './interfaces';
 import { CreateCategorieDTO } from './dtos';
@@ -35,5 +39,17 @@ export class CategoriesService {
 
   async getAll(): Promise<Array<ICategories>> {
     return await this.categorieModel.find().exec();
+  }
+
+  async findCategorieById(categorie: string): Promise<ICategories> {
+    const existingCategorie = await this.categorieModel
+      .findOne({ categorie })
+      .exec();
+    if (!existingCategorie) {
+      throw new NotImplementedException(
+        `Categorie ${categorie} was not found!`,
+      );
+    }
+    return existingCategorie;
   }
 }

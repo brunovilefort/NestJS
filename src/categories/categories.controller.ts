@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -26,5 +27,12 @@ export class CategoriesController {
   @Get()
   async findCategories(): Promise<Array<ICategories>> {
     return await this.categoriesService.getAll();
+  }
+
+  @Get('/:categorie')
+  async findCategorieById(
+    @Param('categorie') categorie: string,
+  ): Promise<ICategories> {
+    return await this.categoriesService.findCategorieById(categorie);
   }
 }
