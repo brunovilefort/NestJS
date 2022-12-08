@@ -1,15 +1,11 @@
-import { ArrayMaxSize, ArrayMinSize, IsArray, IsDateString, IsNotEmpty } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 import { IPlayer } from '../../players/interfaces';
+import { IResult } from '../interface';
 
 export class AssignChallengeDTO {
   @IsNotEmpty()
-  @IsDateString()
-  dateHourChallenge: Date;
+  def: IPlayer;
   @IsNotEmpty()
-  requester: IPlayer;
-  @IsArray()
-  @ArrayMinSize(2)
-  @ArrayMaxSize(2)
-  players: Array<IPlayer>;
+  result: Array<IResult>;
 }
