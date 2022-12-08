@@ -1,12 +1,39 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import {
+  Body,
+  Controller,
+  Logger,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
+import {
+  ClientProxy,
+  ClientProxyFactory,
+  Transport,
+} from '@nestjs/microservices';
+import { CreateCategorieDTO } from './dtos';
 
-@Controller()
+@Controller('api')
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  private logger = new Logger(AppController.name);
+  private clientAdminBackend: ClientProxy;
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  constructor() {
+    this.clientAdminBackend = ClientProxyFactory.create({
+      transport: Transport.RMQ,
+      options: {
+        urls: ['amqp://user:q7W2UQk249gR@18.210.17.173:5672/smartranking'],
+        queue: 'admin-backend',
+      },
+    });
+  }
+
+  @Post('categories')
+  @UsePipes(ValidationPipe)
+  async createCategorie(@Body() createCategorie: CreateCategorieDTO) {
+    return await this.clientAdminBackend.emit(
+      'create-categorie',
+      createCategorie,
+    );
   }
 }
