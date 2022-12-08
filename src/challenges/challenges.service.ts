@@ -1,7 +1,7 @@
-import { BadGatewayException, BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { BadGatewayException, BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PlayersService } from '../players/players.service';
 import { CategoriesService } from '../categories/categories.service';
-import { AssignChallengeDTO } from './dtos';
+import { AssignChallengeDTO, UpdateChallengeDTO } from './dtos';
 import { ChallengeStatus, IChallenge, IMatch } from './interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -37,5 +37,32 @@ export class ChallengesService {
     createdChallenge.status = ChallengeStatus.PENDING;
     this.logger.log(`Challenge created: ${JSON.stringify(createdChallenge)}`);
     return await createdChallenge.save();
+  }
+
+  async getAll(): Promise<Array<IChallenge>> {
+    return await this.challengeModel.find().populate('requester').populate('players').populate('match').exec();
+  }
+
+  async checkPlayerChallenges(_id: any): Promise<Array<IChallenge>> {
+    const allPlayers = await this.playersService.getAll();
+    const playerFilter = allPlayers.filter((player) => player._id === _id);
+    if (playerFilter.length === 0) throw new BadRequestException(`The id: ${_id} is not valid.`);
+    return await this.challengeModel
+      .find()
+      .where('players')
+      .in(_id)
+      .populate('requester')
+      .populate('players')
+      .populate('match')
+      .exec();
+  }
+
+  async updateChallenge(_id: string, updateChallenge: UpdateChallengeDTO): Promise<void> {
+    const foundedChallenge = await this.challengeModel.findById(_id).exec();
+    if (!foundedChallenge) throw new NotFoundException(`Challenge ${_id} was not found.`);
+    if (updateChallenge.status) foundedChallenge.dateHourResponse = new Date();
+    foundedChallenge.status = updateChallenge.status;
+    foundedChallenge.dateHourChallenge = updateChallenge.dateHourChallenge;
+    await this.challengeModel.findOneAndUpdate({ _id }, { $set: foundedChallenge }).exec();
   }
 }
