@@ -93,4 +93,11 @@ export class ChallengesService {
       throw new InternalServerErrorException();
     }
   }
+
+  async deleteChallenge(_id: string): Promise<void> {
+    const foundedChallenge = await this.challengeModel.findById(_id).exec();
+    if (!foundedChallenge) throw new BadRequestException(`Challenge ${_id} has not been registered.`);
+    foundedChallenge.status = ChallengeStatus.CANCELLED;
+    await this.challengeModel.findOneAndUpdate({ _id }, { $set: foundedChallenge }).exec();
+  }
 }
